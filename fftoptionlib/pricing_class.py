@@ -22,34 +22,32 @@ from .helper import call_to_put, spline_fitting
 class FourierPricer(abc.ABC):
     def __init__(self, option=None):
         self.option = option
-
         self._pricing_engine = None
-        self._pricing_engine_args = None
-
+        self._pricing_engine_kwargs = None
         self._log_st_characteristic_fun = None
-        self._log_st_characteristic_fun_model_args = None
+        self._log_st_characteristic_fun_model_kwargs = None
 
     def set_log_st_characteristic_fun(self, log_st_chf, **log_st_chf_kwargs):
         self._log_st_characteristic_fun = log_st_chf
-        self._log_st_characteristic_fun_model_args = log_st_chf_kwargs
+        self._log_st_characteristic_fun_model_kwargs = log_st_chf_kwargs
         return self
 
     def set_pricing_engine(self, price_engine, **price_engine_kwargs):
         self._pricing_engine = price_engine
-        self._pricing_engine_args = price_engine_kwargs
+        self._pricing_engine_kwargs = price_engine_kwargs
         return self
 
     def get_pricing_engine(self):
         return self._pricing_engine
 
     def get_pricing_engine_kwargs(self):
-        return self._pricing_engine_args
+        return self._pricing_engine_kwargs
 
     def get_log_st_characteristic_fun(self):
         return self._log_st_characteristic_fun
 
     def get_log_st_characteristic_fun_model_kwargs(self):
-        return self._log_st_characteristic_fun_model_args
+        return self._log_st_characteristic_fun_model_kwargs
 
     @abc.abstractmethod
     def calc_price(self, *args, **kwargs):
@@ -81,13 +79,14 @@ class CarrMadanFFT(FourierPricer):
         price_engine = pricing_engine_dict[self._pricing_engine]
         chf = log_st_chf_dict[self.get_log_st_characteristic_fun()]
         sim_strikes, call_prices = price_engine(
-            **self._pricing_engine_args,
             r=self.option.get_zero_rate(),
             t=self.option.get_time_to_maturity(),
             S0=self.option.get_underlying_close_price(),
             chf_ln_st=chf,
             q=self.option.get_dividend(),
-            **self.get_log_st_characteristic_fun_model_kwargs())
+            **self.get_pricing_engine_kwargs(),
+            **self.get_log_st_characteristic_fun_model_kwargs(),
+        )
         ffn_prices = spline_fitting(sim_strikes, call_prices, spline_order)(strike)
         ffn_prices = call_to_put(
             ffn_prices, put_call, strike,
