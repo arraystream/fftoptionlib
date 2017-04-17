@@ -89,7 +89,7 @@ class CarrMadanFFT(FourierPricer):
             S0=self.option.get_underlying_close_price(),
             chf_ln_st=chf,
             q=self.option.get_dividend(),
-            **pricer_kwargs,
+            **pricer_kwargs
         )
         ffn_prices = spline_fitting(sim_strikes, call_prices, spline_order)(strike)
         ffn_prices = call_to_put(
