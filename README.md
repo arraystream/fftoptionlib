@@ -1,4 +1,6 @@
-## fftoptionlib
+## FFTOptionLib
+
+[![PyPI Version](https://img.shields.io/pypi/v/fftoptionlib.svg)](https://pypi.python.org/pypi/fftoptionlib) [![Build Status](https://travis-ci.org/arraystream/fftoptionlib.svg?branch=master)](https://travis-ci.org/arraystream/fftoptionlib)
 
 FFT-based Option Pricing Methods in Python
 
