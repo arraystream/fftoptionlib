@@ -8,7 +8,10 @@ python:
 install:
   - pip install --upgrade pip
   - pip install --upgrade setuptools wheel
-  - pip install --upgrade pytest
+  - pip install --upgrade pytest pytest-cov coveralls
   - pip install --upgrade .
 
-script: pytest
+script: py.test --cov=fftoptionlib tests/
+
+after_success:
+  coveralls

@@ -30,7 +30,7 @@ def main():
               'Topic :: Scientific/Engineering :: Mathematics',
               'Intended Audience :: Financial and Insurance Industry'
           ],
-          license='MIT',
+          license='BSD',
           packages=find_packages(include=['fftoptionlib']),
           install_requires=['numpy', 'scipy', 'pandas'],
           platforms='any')
