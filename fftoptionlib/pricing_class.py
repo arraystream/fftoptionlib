@@ -2,6 +2,7 @@
 
 import abc
 
+from fftoptionlib.cosin_pricer import cosin_vanilla_call
 from .characteristic_funs import (
     black_schole_log_st_chf,
     poisson_log_st_chf,
@@ -17,6 +18,7 @@ from .fourier_pricer import (
     carr_madan_fraction_fft_call_pricer,
 )
 from .helper import call_to_put, spline_fitting
+import numpy as np
 
 
 class FourierPricer(abc.ABC):
@@ -69,7 +71,8 @@ log_st_chf_dict = {
 
 pricing_engine_dict = {
     'fft': carr_madan_fft_call_pricer,
-    'fractional_fft': carr_madan_fraction_fft_call_pricer
+    'fractional_fft': carr_madan_fraction_fft_call_pricer,
+    'cosine': cosin_vanilla_call
 }
 
 
@@ -93,3 +96,31 @@ class CarrMadanFFT(FourierPricer):
             ffn_prices, put_call, strike,
             self.option.get_discount_bond_price(), self.option.get_forward_price(), put_label)
         return ffn_prices
+
+
+class CosinePricer(FourierPricer):
+    def __init__(self, option=None):
+        FourierPricer.__init__(self, option)
+
+    def _single_cal_price(self, strike, a, b):
+        price_engine = pricing_engine_dict[self._pricing_engine]
+        chf = log_st_chf_dict[self.get_log_st_characteristic_fun()]
+        call_price = price_engine(**self._pricing_engine_args,
+                                  strike=strike,
+                                  intv_a=a,
+                                  intv_b=b,
+                                  r=self.option.get_zero_rate(),
+                                  t=self.option.get_time_to_maturity(),
+                                  S0=self.option.get_underlying_close_price(),
+                                  chf_ln_st=chf,
+                                  q=self.option.get_dividend(),
+                                  **self.get_log_st_characteristic_fun_model_kwargs())
+
+        return call_price
+
+    def calc_price(self, strike, put_call, a, b, put_label='put'):
+        call_prices = [self._single_cal_price(one_strike, a, b, ) for one_strike in strike]
+        cosine_prices = call_to_put(np.array(call_prices), put_call, strike,
+                                    self.option.get_discount_bond_price(),
+                                    self.option.get_forward_price(), put_label)
+        return cosine_prices
