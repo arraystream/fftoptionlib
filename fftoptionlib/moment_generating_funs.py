@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import autograd.numpy as np
 from scipy.special import gamma
 from autograd import grad
@@ -16,8 +17,7 @@ def merton_jump_log_st_mgf(u, t, r, q, S0, sigma, jump_rate, norm_m, norm_sig):
 
 def kou_jump_log_st_mgf(u, t, r, q, S0, sigma, jump_rate, exp_pos, exp_neg, prob_pos):
     mgf_xt = diffusion_with_cpp_double_exponential_mgf
-    return general_ln_st_mgf(u, t, r, q, S0, mgf_xt, sigma=sigma, jump_rate=jump_rate, exp_pos=exp_pos, exp_neg=exp_neg,
-                             prob_pos=prob_pos)
+    return general_ln_st_mgf(u, t, r, q, S0, mgf_xt, sigma=sigma, jump_rate=jump_rate, exp_pos=exp_pos, exp_neg=exp_neg, prob_pos=prob_pos)
 
 
 def poisson_log_st_mgf(u, t, r, q, S0, jump_rate):
