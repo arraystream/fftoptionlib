@@ -32,7 +32,7 @@ def main():
           ],
           license='BSD',
           packages=find_packages(include=['fftoptionlib']),
-          install_requires=['numpy', 'scipy', 'pandas'],
+          install_requires=['numpy', 'scipy', 'pandas', 'autograd'],
           platforms='any')
 
 
