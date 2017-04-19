@@ -3,6 +3,7 @@
 import unittest
 
 import numpy as np
+import numpy.testing as npt
 
 from fftoptionlib.option_class import BasicOption
 from fftoptionlib.pricing_class import CarrMadanFFT, CosinePricer
@@ -37,7 +38,7 @@ class TestPricingClass(unittest.TestCase):
         fft_pricer.set_log_st_characteristic_fun('black_shole', sigma=volatility)
         fft_pricer.set_pricing_engine('fft', N=N, d_u=d_u, alpha=alpha)
         res = fft_pricer.calc_price(strike_arr, put_call_arr)
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)
 
     def test_cal_price_fractional_fft(self):
         fft_pricer = CarrMadanFFT(self.vanilla_option)
@@ -55,15 +56,16 @@ class TestPricingClass(unittest.TestCase):
         fft_pricer.set_log_st_characteristic_fun('black_shole', sigma=volatility)
         fft_pricer.set_pricing_engine('fractional_fft', N=N, d_u=d_u, d_k=d_k, alpha=alpha)
         res = fft_pricer.calc_price(strike_arr, put_call_arr)
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)
 
     def test_cal_price_cosine(self):
         cosine_pricer = CosinePricer(self.vanilla_option)
         strike_arr = np.array([5, 10, 30, 36, 50, 60, 100])
         put_call_arr = np.array(['call', 'call', 'put', 'call', 'call', 'put', 'call'])
-        exp = np.array([3.09958567e+01, 2.60163625e+01, 8.25753140e-05, 8.12953226e-01,
-                        8.97449491e-11, 2.37785797e+01, 2.19293560e-85, ]
-                       )
+        exp = np.array(
+            [3.09958567e+01, 2.60163625e+01, 8.25753140e-05, 8.12953226e-01,
+             8.97449491e-11, 2.37785797e+01, 2.19293560e-85, ]
+        )
 
         volatility = 0.20
         N = 150
@@ -71,4 +73,4 @@ class TestPricingClass(unittest.TestCase):
         cosine_pricer.set_log_st_characteristic_fun('black_shole', sigma=volatility)
         cosine_pricer.set_pricing_engine('cosine', N=N)
         res = cosine_pricer.calc_price(strike_arr, put_call_arr, L=30)
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)

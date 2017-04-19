@@ -1,8 +1,29 @@
 # -*- coding: utf-8 -*-
 
 import abc
-from fftoptionlib.cosin_pricer import cosin_vanilla_call, interval_a_and_b
-from fftoptionlib.moment_generating_funs import (
+
+import numpy as np
+
+from .characteristic_funs import (
+    black_schole_log_st_chf,
+    poisson_log_st_chf,
+    merton_jump_log_st_chf,
+    kou_jump_log_st_chf,
+    vg_log_st_chf,
+    nig_log_st_chf,
+    heston_log_st_chf,
+    cgmy_log_st_chf,
+)
+from .cosine_pricer import (
+    cosine_vanilla_call,
+    interval_a_and_b,
+)
+from .fourier_pricer import (
+    carr_madan_fft_call_pricer,
+    carr_madan_fraction_fft_call_pricer,
+)
+from .helper import call_to_put, spline_fitting
+from .moment_generating_funs import (
     cumulants_from_mgf,
     general_log_moneyness_mgf,
     black_schole_log_st_mgf,
@@ -14,22 +35,6 @@ from fftoptionlib.moment_generating_funs import (
     heston_log_st_mgf,
     cgmy_log_st_mgf,
 )
-from .characteristic_funs import (
-    black_schole_log_st_chf,
-    poisson_log_st_chf,
-    merton_jump_log_st_chf,
-    kou_jump_log_st_chf,
-    vg_log_st_chf,
-    nig_log_st_chf,
-    heston_log_st_chf,
-    cgmy_log_st_chf,
-)
-from .fourier_pricer import (
-    carr_madan_fft_call_pricer,
-    carr_madan_fraction_fft_call_pricer,
-)
-from .helper import call_to_put, spline_fitting
-import numpy as np
 
 
 class FourierPricer(abc.ABC):
@@ -78,19 +83,21 @@ log_st_chf_dict = {
     'cgmy': cgmy_log_st_chf
 }
 
-log_st_mgf_dict = {'black_shole': black_schole_log_st_mgf,
-                   'poisson': poisson_log_st_mgf,
-                   'merton_jump': merton_jump_log_st_mgf,
-                   'kou_jump': kou_jump_log_st_mgf,
-                   'vg': vg_log_st_mgf,
-                   'nig': nig_log_st_mgf,
-                   'heston': heston_log_st_mgf,
-                   'cgmy': cgmy_log_st_mgf}
+log_st_mgf_dict = {
+    'black_shole': black_schole_log_st_mgf,
+    'poisson': poisson_log_st_mgf,
+    'merton_jump': merton_jump_log_st_mgf,
+    'kou_jump': kou_jump_log_st_mgf,
+    'vg': vg_log_st_mgf,
+    'nig': nig_log_st_mgf,
+    'heston': heston_log_st_mgf,
+    'cgmy': cgmy_log_st_mgf
+}
 
 pricing_engine_dict = {
     'fft': carr_madan_fft_call_pricer,
     'fractional_fft': carr_madan_fraction_fft_call_pricer,
-    'cosine': cosin_vanilla_call
+    'cosine': cosine_vanilla_call
 }
 
 
@@ -127,14 +134,15 @@ class CosinePricer(FourierPricer):
 
     def calc_integeral_interval(self, strike, L):
         mgf = log_st_mgf_dict[self.get_log_st_characteristic_fun()]
-        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf,
-                                        strike,
-                                        mgf,
-                                        t=self.option.get_time_to_maturity(),
-                                        r=self.option.get_zero_rate(),
-                                        q=self.option.get_dividend(),
-                                        S0=self.option.get_underlying_close_price(),
-                                        **self.get_log_st_characteristic_fun_kwargs())
+        c1, c2, c4 = cumulants_from_mgf(
+            general_log_moneyness_mgf,
+            strike,
+            mgf,
+            t=self.option.get_time_to_maturity(),
+            r=self.option.get_zero_rate(),
+            q=self.option.get_dividend(),
+            S0=self.option.get_underlying_close_price(),
+            **self.get_log_st_characteristic_fun_kwargs())
         a, b = interval_a_and_b(c1, c2, c4, L)
         return a, b
 
@@ -147,21 +155,23 @@ class CosinePricer(FourierPricer):
         pricer_kwargs.update(self.get_pricing_engine_kwargs())
         pricer_kwargs.update(self.get_log_st_characteristic_fun_kwargs())
 
-        call_price = price_engine(strike=strike,
-                                  intv_a=a,
-                                  intv_b=b,
-                                  r=self.option.get_zero_rate(),
-                                  t=self.option.get_time_to_maturity(),
-                                  S0=self.option.get_underlying_close_price(),
-                                  chf_ln_st=chf,
-                                  q=self.option.get_dividend(),
-                                  **pricer_kwargs)
+        call_price = price_engine(
+            strike=strike,
+            intv_a=a,
+            intv_b=b,
+            r=self.option.get_zero_rate(),
+            t=self.option.get_time_to_maturity(),
+            S0=self.option.get_underlying_close_price(),
+            chf_ln_st=chf,
+            q=self.option.get_dividend(),
+            **pricer_kwargs)
 
         return call_price
 
     def calc_price(self, strike, put_call, L=10, put_label='put'):
         call_prices = [self._single_cal_price(one_strike, L) for one_strike in strike]
-        cosine_prices = call_to_put(np.array(call_prices), put_call, strike,
-                                    self.option.get_discount_bond_price(),
-                                    self.option.get_forward_price(), put_label)
+        cosine_prices = call_to_put(
+            np.array(call_prices), put_call, strike,
+            self.option.get_discount_bond_price(),
+            self.option.get_forward_price(), put_label)
         return cosine_prices

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 
 from fftoptionlib.characteristic_funs import general_log_moneyness_chf
@@ -41,7 +43,7 @@ def v_put(K, n, a, b):
     return 2 / (b - a) * K * (phi(n, a, b, a, 0.) - chi(n, a, b, a, 0.))
 
 
-def cosin_vanilla_call(N, strike, intv_a, intv_b, r, t, S0, chf_ln_st, **kwargs):
+def cosine_vanilla_call(N, strike, intv_a, intv_b, r, t, S0, chf_ln_st, **kwargs):
     k_arr = np.arange(N)
     a_arr = a_n(k_arr, intv_a, intv_b, strike, chf_ln_st, t, r, S0=S0, **kwargs)
     v_arr = v_call(strike, k_arr, intv_a, intv_b)

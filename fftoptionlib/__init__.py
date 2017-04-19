@@ -3,4 +3,4 @@
 from .version import __version__
 
 from .option_class import BasicOption
-from .pricing_class import CarrMadanFFT
+from .pricing_class import CarrMadanFFT, CosinePricer
