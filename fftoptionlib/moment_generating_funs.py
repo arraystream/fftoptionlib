@@ -117,8 +117,8 @@ def diffusion_with_cpp_double_exponential_mgf(u, t, sigma, jump_rate, exp_pos, e
     return diffusion_mgf(u, t, sigma) * cpp_double_exponential_mgf(u, t, jump_rate, exp_pos, exp_neg, prob_pos)
 
 
-def general_log_moneyness_mgf(u, strike, mgf, *args, **kwargs):
-    return np.exp(-u * np.log(strike)) * mgf(u, *args, **kwargs)
+def general_log_moneyness_mgf(u, strike, mgf, **kwargs):
+    return np.exp(-u * np.log(strike)) * mgf(u, **kwargs)
 
 
 def cumulant_generating_fun(u, mgf, *args, **kwargs):
