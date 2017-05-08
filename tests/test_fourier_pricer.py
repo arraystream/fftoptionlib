@@ -2,88 +2,48 @@
 
 import unittest
 
-from fftoptionlib.characteristic_funs import (
-    black_schole_log_st_chf,
-    heston_log_st_chf,
-    vg_log_st_chf,
-)
-from fftoptionlib.cosine_pricer import (
-    interval_a_and_b,
-    cosine_vanilla_call,
-)
-from fftoptionlib.moment_generating_funs import (
-    cumulants_from_mgf,
-    general_log_moneyness_mgf,
-    black_schole_log_st_mgf,
-    heston_log_st_mgf,
-    vg_log_st_mgf,
-)
+from fftoptionlib.fourier_pricer import carr_madan_fft_call_pricer, carr_madan_fraction_fft_call_pricer
+from fftoptionlib.helper import spline_fitting
+from fftoptionlib.process_class import BlackSchole, Heston, VarianceGamma
 
 
-class TestCosinePricer(unittest.TestCase):
-    def test_black_shole(self):
-        N = 16
-        L = 10
+class TestFourierPricer(unittest.TestCase):
+    def test_carr_madan_fft_call_pricer_black_shole(self):
+        N = 2 ** 15
+        d_u = 0.01
+        alpha = 1
         S0 = 100
-        t = 0.1
-        r = 0.1
+        t = 1
+        r = 0.05
         q = 0
-        sigma = 0.25
-        strike = 80
-        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, black_schole_log_st_mgf, t, r, q, S0, sigma)
-        intv_a, intv_b = interval_a_and_b(c1, c2, c4, L)
-        exp_res = 20.792
-        res = cosine_vanilla_call(N, strike, intv_a, intv_b, r, t, S0, black_schole_log_st_chf, q=q, sigma=sigma)
-        self.assertAlmostEqual(exp_res, res, 3)
-        N = 64
-        res = cosine_vanilla_call(N, strike, intv_a, intv_b, r, t, S0, black_schole_log_st_chf, q=q, sigma=sigma)
-        exp_res = 20.799
-        self.assertAlmostEqual(exp_res, res, 3)
+        sigma = 0.3
+        strike, call_prices = carr_madan_fft_call_pricer(N, d_u, alpha, r, t, S0, q, BlackSchole(sigma).set_type('chf'))
+        ffn_pricer = spline_fitting(strike, call_prices, 2)
+        exp_res = 19.6974
+        res = ffn_pricer(90)
+        self.assertAlmostEqual(exp_res, res, 4)
 
-    def test_black_shole_2(self):
-        N = 16
-        L = 10
+    def test_carr_madan_fraction_fft_call_pricer(self):
+        N = 2 ** 12
+        d_u = 0.01
+        d_k = 0.1
+        alpha = 1
         S0 = 100
-        t = 0.1
-        r = 0.1
+        t = 1
+        r = 0.05
         q = 0
-        sigma = 0.25
+        sigma = 0.3
+        strike, call_prices = carr_madan_fraction_fft_call_pricer(N, d_u, d_k, alpha, r, t, S0, q, BlackSchole(sigma).set_type('chf'))
+        ffn_pricer = spline_fitting(strike, call_prices, 2)
+        exp_res = 19.6974
+        res = ffn_pricer(90)
+        self.assertAlmostEqual(exp_res, res, 4)
 
-        strike = 100
-        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, black_schole_log_st_mgf, t, r, q, S0, sigma)
-        intv_a, intv_b = interval_a_and_b(c1, c2, c4, L)
+    def test_carr_madan_fft_heston(self):
+        N = 2 ** 15
+        d_u = 0.01
+        alpha = 1
 
-        exp_res = 3.659
-        res = cosine_vanilla_call(N, strike, intv_a, intv_b, r, t, S0, black_schole_log_st_chf, q=q, sigma=sigma)
-        self.assertAlmostEqual(exp_res, res, 3)
-        N = 64
-        res = cosine_vanilla_call(N, strike, intv_a, intv_b, r, t, S0, black_schole_log_st_chf, q=q, sigma=sigma)
-        exp_res = 3.660
-        self.assertAlmostEqual(exp_res, res, 3)
-
-    def test_black_shole_3(self):
-        N = 16
-        L = 10
-        S0 = 100
-        t = 0.1
-        r = 0.1
-        q = 0
-        sigma = 0.25
-
-        strike = 120
-        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, black_schole_log_st_mgf, t, r, q, S0, sigma)
-        intv_a, intv_b = interval_a_and_b(c1, c2, c4, L)
-        exp_res = 0.044
-        res = cosine_vanilla_call(N, strike, intv_a, intv_b, r, t, S0, black_schole_log_st_chf, q=q, sigma=sigma)
-        self.assertAlmostEqual(exp_res, res, 3)
-        N = 64
-        res = cosine_vanilla_call(N, strike, intv_a, intv_b, r, t, S0, black_schole_log_st_chf, q=q, sigma=sigma)
-        exp_res = 0.045
-        self.assertAlmostEqual(exp_res, res, 3)
-
-    def test_heston(self):
-        N = 100
-        L = 10
         S0 = 100
         t = 0.5
         k = 2
@@ -93,17 +53,38 @@ class TestCosinePricer(unittest.TestCase):
         theta = 0.04
         V0 = 0.04
         rho = -0.7
-        strike = 90
-        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, heston_log_st_mgf, t, r, q, S0, V0, theta, k,
-                                        sigma, rho)
-        intv_a, intv_b = interval_a_and_b(c1, c2, c4, L)
+        strike, call_prices = carr_madan_fft_call_pricer(N, d_u, alpha, r, t, S0, q, Heston(V0, theta, k, sigma, rho).set_type('chf'))
+        ffn_pricer = spline_fitting(strike, call_prices, 2)
         exp_res = 13.2023
-        res = cosine_vanilla_call(N, strike, intv_a, intv_b, r, t, S0, heston_log_st_chf, q=q, V0=V0, theta=theta, k=k, sigma=sigma, rho=rho)
-        self.assertAlmostEqual(exp_res, res, 3)
+        res = ffn_pricer(90)
+        self.assertAlmostEqual(exp_res, res, 4)
 
-    def test_vg(self):
-        N = 150
-        L = 10
+    def test_carr_madan_fractional_fft_heston(self):
+        N = 2 ** 13
+        d_u = 0.01
+        d_k = 0.01
+        alpha = 1
+
+        S0 = 100
+        t = 0.5
+        k = 2
+        r = 0.03
+        q = 0
+        sigma = 0.5
+        theta = 0.04
+        V0 = 0.04
+        rho = -0.7
+        strike, call_prices = carr_madan_fraction_fft_call_pricer(N, d_u, d_k, alpha, r, t, S0, q, Heston(V0, theta, k, sigma, rho).set_type('chf'))
+        ffn_pricer = spline_fitting(strike, call_prices, 2)
+        exp_res = 13.2023
+        res = ffn_pricer(90)
+        self.assertAlmostEqual(exp_res, res, 4)
+
+    def test_carr_madan_fft_vg(self):
+        N = 2 ** 15
+        d_u = 0.01
+        alpha = 1
+
         S0 = 100
         t = 1 / 12
         r = 0.1
@@ -111,9 +92,26 @@ class TestCosinePricer(unittest.TestCase):
         sigma = 0.12
         theta = -0.14
         v = 0.2
-        strike = 90
-        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, vg_log_st_mgf, t, r, q, S0, theta, v, sigma)
-        intv_a, intv_b = interval_a_and_b(c1, c2, c4, L)
-        res = cosine_vanilla_call(N, strike, intv_a, intv_b, r, t, S0, vg_log_st_chf, q=q, theta=theta, v=v, sigma=sigma)
+        strike, call_prices = carr_madan_fft_call_pricer(N, d_u, alpha, r, t, S0, q, VarianceGamma(theta, v, sigma).set_type('chf'))
+        ffn_pricer = spline_fitting(strike, call_prices, 2)
         exp_res = 10.8289
+        res = ffn_pricer(90)
+        self.assertAlmostEqual(exp_res, res, 4)
+
+    def test_carr_madan_fractional_fft_vg(self):
+        N = 2 ** 16
+        d_u = 0.01
+        d_k = 0.01
+        alpha = 1
+        S0 = 100
+        t = 1 / 12
+        r = 0.1
+        q = 0
+        sigma = 0.12
+        theta = -0.14
+        v = 0.2
+        strike, call_prices = carr_madan_fraction_fft_call_pricer(N, d_u, d_k, alpha, r, t, S0, q, VarianceGamma(theta, v, sigma).set_type('chf'))
+        ffn_pricer = spline_fitting(strike, call_prices, 2)
+        exp_res = 10.8289
+        res = ffn_pricer(90)
         self.assertAlmostEqual(exp_res, res, 4)

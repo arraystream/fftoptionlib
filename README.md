@@ -18,7 +18,7 @@ https://arxiv.org/abs/1609.07472
 
 ### Authors
 
-ArrayStream (Yu Zheng, Ran Fan, Yongxin Yang)
+ArrayStream (Yu Zheng, Ran Fan)
 
 ### Installation
 ```pip install fftoptionlib```
