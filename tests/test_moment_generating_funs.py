@@ -2,13 +2,33 @@
 
 import unittest
 
-from fftoptionlib.moment_generating_funs import black_schole_log_st_mgf, merton_jump_log_st_mgf, \
-    poisson_log_st_mgf, diffusion_mgf, cpp_normal_mgf, kou_jump_log_st_mgf, double_exponential_mgf, poisson_mgf, \
-    vg_cgm_mgf, vg_mgf, parameter_to_cgm, vg_log_st_mgf, nig_log_st_mgf
-
-from fftoptionlib.characteristic_funs import black_schole_log_st_chf, merton_jump_log_st_chf, \
-    poisson_log_st_chf, diffusion_chf, cpp_normal_chf, kou_jump_log_st_chf, double_exponential_chf, poisson_chf, \
-    vg_log_st_chf, nig_log_st_chf
+from fftoptionlib.characteristic_funs import (
+    black_schole_log_st_chf,
+    merton_jump_log_st_chf,
+    poisson_log_st_chf,
+    diffusion_chf,
+    cpp_normal_chf,
+    kou_jump_log_st_chf,
+    double_exponential_chf,
+    poisson_chf,
+    vg_log_st_chf,
+    nig_log_st_chf,
+)
+from fftoptionlib.moment_generating_funs import (
+    black_schole_log_st_mgf,
+    merton_jump_log_st_mgf,
+    poisson_log_st_mgf,
+    diffusion_mgf,
+    cpp_normal_mgf,
+    kou_jump_log_st_mgf,
+    double_exponential_mgf,
+    poisson_mgf,
+    vg_cgm_mgf,
+    vg_mgf,
+    parameter_to_cgm,
+    vg_log_st_mgf,
+    nig_log_st_mgf,
+)
 
 
 class TestMomentGeneratingFunctions(unittest.TestCase):
