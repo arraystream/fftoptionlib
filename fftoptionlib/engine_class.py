@@ -1,4 +1,4 @@
-from fftoptionlib.cosin_pricer import cosin_vanilla_call, interval_a_and_b
+from fftoptionlib.cosine_pricer import cosin_vanilla_call, interval_a_and_b
 from fftoptionlib.fourier_pricer import carr_madan_fft_call_pricer, carr_madan_fraction_fft_call_pricer
 from fftoptionlib.helper import spline_fitting
 from fftoptionlib.moment_generating_funs import general_log_moneyness_mgf, cumulants_from_mgf

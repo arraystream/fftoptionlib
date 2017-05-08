@@ -7,8 +7,14 @@ from fftoptionlib.characteristic_funs import (black_schole_log_st_chf,
                                               nig_log_st_chf,
                                               heston_log_st_chf,
                                               cgmy_log_st_chf)
-from fftoptionlib.moment_generating_funs import black_schole_log_st_mgf, merton_jump_log_st_mgf, kou_jump_log_st_mgf, poisson_log_st_mgf, nig_log_st_mgf, heston_log_st_mgf, cgmy_log_st_mgf, \
-    vg_log_st_mgf
+from fftoptionlib.moment_generating_funs import (black_schole_log_st_mgf,
+                                                 merton_jump_log_st_mgf,
+                                                 kou_jump_log_st_mgf,
+                                                 poisson_log_st_mgf,
+                                                 nig_log_st_mgf,
+                                                 heston_log_st_mgf,
+                                                 cgmy_log_st_mgf,
+                                                 vg_log_st_mgf)
 import abc
 
 

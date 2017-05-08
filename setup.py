@@ -16,13 +16,13 @@ def check_python_version():
 def main():
     setup(name='fftoptionlib',
           version=__version__,
-          author='ArrayStream (Yu Zheng, Ran Fan, Yongxin Yang)',
+          author='ArrayStream (Yu Zheng, Ran Fan)',
           author_email='team@arraystream.com',
           url='https://github.com/arraystream/fftoptionlib',
           description='FFT-based Option Pricing Method in Python',
           long_description='FFT-based Option Pricing Method in Python',
           classifiers=[
-              'Development Status :: 4 - Beta',
+              'Development Status :: 5 - Production/Stable',
               'Programming Language :: Python :: 3',
               'Programming Language :: Python :: 3.3',
               'Programming Language :: Python :: 3.4',

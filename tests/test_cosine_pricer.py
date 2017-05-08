@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from fftoptionlib.cosin_pricer import cosin_vanilla_call, interval_a_and_b
+from fftoptionlib.cosine_pricer import cosin_vanilla_call, interval_a_and_b
 from fftoptionlib.moment_generating_funs import cumulants_from_mgf, general_log_moneyness_mgf
 from fftoptionlib.process_class import BlackSchole, Heston, VarianceGamma
 
