@@ -1,8 +1,20 @@
-from fftoptionlib.cosine_pricer import cosin_vanilla_call, interval_a_and_b
-from fftoptionlib.fourier_pricer import carr_madan_fft_call_pricer, carr_madan_fraction_fft_call_pricer
-from fftoptionlib.helper import spline_fitting
-from fftoptionlib.moment_generating_funs import general_log_moneyness_mgf, cumulants_from_mgf
+# -*- coding: utf-8 -*-
+
 import numpy as np
+
+from fftoptionlib.cosine_pricer import (
+    cosin_vanilla_call,
+    interval_a_and_b,
+)
+from fftoptionlib.fourier_pricer import (
+    carr_madan_fft_call_pricer,
+    carr_madan_fraction_fft_call_pricer,
+)
+from fftoptionlib.helper import spline_fitting
+from fftoptionlib.moment_generating_funs import (
+    general_log_moneyness_mgf,
+    cumulants_from_mgf,
+)
 
 
 class FFTEngine(object):
@@ -37,7 +49,7 @@ class CosineEngine(object):
         self.N = N
         self.L = L
 
-    def calc_integeral_interval(self, strike, L, t, r, q, S0, chf_ln_st):
+    def calc_integral_interval(self, strike, L, t, r, q, S0, chf_ln_st):
         c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf,
                                         strike,
                                         chf_ln_st.set_type('mgf'),
@@ -49,7 +61,7 @@ class CosineEngine(object):
         return a, b
 
     def _single_cal_price(self, strike, t, r, q, S0, chf_ln_st):
-        a, b = self.calc_integeral_interval(strike, self.L, t, r, q, S0, chf_ln_st)
+        a, b = self.calc_integral_interval(strike, self.L, t, r, q, S0, chf_ln_st)
         call_price = cosin_vanilla_call(
             self.N,
             strike=strike,

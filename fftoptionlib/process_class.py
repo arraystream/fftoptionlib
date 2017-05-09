@@ -1,21 +1,27 @@
 # -*- coding: utf-8 -*-
-from fftoptionlib.characteristic_funs import (black_schole_log_st_chf,
-                                              merton_jump_log_st_chf,
-                                              kou_jump_log_st_chf,
-                                              poisson_log_st_chf,
-                                              vg_log_st_chf,
-                                              nig_log_st_chf,
-                                              heston_log_st_chf,
-                                              cgmy_log_st_chf)
-from fftoptionlib.moment_generating_funs import (black_schole_log_st_mgf,
-                                                 merton_jump_log_st_mgf,
-                                                 kou_jump_log_st_mgf,
-                                                 poisson_log_st_mgf,
-                                                 nig_log_st_mgf,
-                                                 heston_log_st_mgf,
-                                                 cgmy_log_st_mgf,
-                                                 vg_log_st_mgf)
+
 import abc
+
+from fftoptionlib.characteristic_funs import (
+    black_schole_log_st_chf,
+    merton_jump_log_st_chf,
+    kou_jump_log_st_chf,
+    poisson_log_st_chf,
+    vg_log_st_chf,
+    nig_log_st_chf,
+    heston_log_st_chf,
+    cgmy_log_st_chf,
+)
+from fftoptionlib.moment_generating_funs import (
+    black_scholes_log_st_mgf,
+    merton_jump_log_st_mgf,
+    kou_jump_log_st_mgf,
+    poisson_log_st_mgf,
+    nig_log_st_mgf,
+    heston_log_st_mgf,
+    cgmy_log_st_mgf,
+    vg_log_st_mgf,
+)
 
 
 def chf_and_mgf_switch(chf, mgf, type):
@@ -40,13 +46,13 @@ class LogSt(abc.ABC):
         return self._type
 
 
-class BlackSchole(LogSt):
+class BlackScholes(LogSt):
     def __init__(self, sigma):
-        super(BlackSchole, self).__init__()
+        super(BlackScholes, self).__init__()
         self.sigma = sigma
 
     def __call__(self, u, t, r, q, S0):
-        return chf_and_mgf_switch(black_schole_log_st_chf, black_schole_log_st_mgf, self.type)(u, t, r, q, S0, self.sigma)
+        return chf_and_mgf_switch(black_schole_log_st_chf, black_scholes_log_st_mgf, self.type)(u, t, r, q, S0, self.sigma)
 
 
 class MertonJump(LogSt):

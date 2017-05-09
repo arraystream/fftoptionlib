@@ -1,9 +1,20 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from fftoptionlib.cosine_pricer import cosin_vanilla_call, interval_a_and_b
-from fftoptionlib.moment_generating_funs import cumulants_from_mgf, general_log_moneyness_mgf
-from fftoptionlib.process_class import BlackSchole, Heston, VarianceGamma
+
+from fftoptionlib.cosine_pricer import (
+    cosin_vanilla_call,
+    interval_a_and_b,
+)
+from fftoptionlib.moment_generating_funs import (
+    cumulants_from_mgf,
+    general_log_moneyness_mgf,
+)
+from fftoptionlib.process_class import (
+    BlackScholes,
+    Heston,
+    VarianceGamma,
+)
 
 
 class TestCosinePricer(unittest.TestCase):
@@ -17,14 +28,14 @@ class TestCosinePricer(unittest.TestCase):
         sigma = 0.25
 
         strike = 80
-        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, BlackSchole(sigma).set_type('mgf'), t=t, r=r, q=q, S0=S0)
+        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, BlackScholes(sigma).set_type('mgf'), t=t, r=r, q=q, S0=S0)
         intv_a, intv_b = interval_a_and_b(c1, c2, c4, L)
         print(intv_a, intv_b)
         exp_res = 20.792
-        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackSchole(sigma).set_type('chf'))
+        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackScholes(sigma).set_type('chf'))
         self.assertAlmostEqual(exp_res, res, 3)
         N = 64
-        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackSchole(sigma).set_type('chf'))
+        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackScholes(sigma).set_type('chf'))
         exp_res = 20.799
         self.assertAlmostEqual(exp_res, res, 3)
 
@@ -38,15 +49,15 @@ class TestCosinePricer(unittest.TestCase):
         sigma = 0.25
 
         strike = 100
-        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, BlackSchole(sigma).set_type('mgf'), t=t, r=r, q=q, S0=S0)
+        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, BlackScholes(sigma).set_type('mgf'), t=t, r=r, q=q, S0=S0)
         intv_a, intv_b = interval_a_and_b(c1, c2, c4, L)
         print(intv_a, intv_b)
 
         exp_res = 3.659
-        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackSchole(sigma).set_type('chf'))
+        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackScholes(sigma).set_type('chf'))
         self.assertAlmostEqual(exp_res, res, 3)
         N = 64
-        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackSchole(sigma).set_type('chf'))
+        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackScholes(sigma).set_type('chf'))
         exp_res = 3.660
         self.assertAlmostEqual(exp_res, res, 3)
 
@@ -60,14 +71,14 @@ class TestCosinePricer(unittest.TestCase):
         sigma = 0.25
 
         strike = 120
-        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, BlackSchole(sigma).set_type('mgf'), t=t, r=r, q=q, S0=S0)
+        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, BlackScholes(sigma).set_type('mgf'), t=t, r=r, q=q, S0=S0)
         intv_a, intv_b = interval_a_and_b(c1, c2, c4, L)
         print(intv_a, intv_b)
         exp_res = 0.044
-        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackSchole(sigma).set_type('chf'))
+        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackScholes(sigma).set_type('chf'))
         self.assertAlmostEqual(exp_res, res, 3)
         N = 64
-        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackSchole(sigma).set_type('chf'))
+        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, BlackScholes(sigma).set_type('chf'))
         exp_res = 0.045
         self.assertAlmostEqual(exp_res, res, 3)
 
@@ -84,13 +95,11 @@ class TestCosinePricer(unittest.TestCase):
         V0 = 0.04
         rho = -0.7
         strike = 90
-        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, Heston(V0, theta, k,
-                                                                                  sigma, rho).set_type('mgf'), t=t, r=r, q=q, S0=S0)
+        c1, c2, c4 = cumulants_from_mgf(general_log_moneyness_mgf, strike, Heston(V0, theta, k, sigma, rho).set_type('mgf'), t=t, r=r, q=q, S0=S0)
         intv_a, intv_b = interval_a_and_b(c1, c2, c4, L)
         print(intv_a, intv_b)
         exp_res = 13.2023
-        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, Heston(V0, theta, k,
-                                                                                sigma, rho).set_type('chf'))
+        res = cosin_vanilla_call(N, strike, intv_a, intv_b, t, r, q, S0, Heston(V0, theta, k, sigma, rho).set_type('chf'))
         self.assertAlmostEqual(exp_res, res, 3)
 
     def test_vg(self):

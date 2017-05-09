@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 
-from .version import __version__
-
+from .engine_class import (
+    FFTEngine,
+    FractionFFTEngine,
+    CosineEngine,
+)
 from .option_class import BasicOption
 from .pricing_class import FourierPricer
-from .engine_class import FFTEngine, FractionFFTEngine, CosineEngine
 from .process_class import (
-    BlackSchole,
+    BlackScholes,
     Heston,
     MertonJump,
     KouJump,
     VarianceGamma,
     NIG,
     Poisson,
-    CGMY
+    CGMY,
 )
+from .version import __version__

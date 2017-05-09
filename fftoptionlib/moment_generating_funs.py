@@ -5,7 +5,7 @@ from scipy.special import gamma
 from autograd import grad
 
 
-def black_schole_log_st_mgf(u, t, r, q, S0, sigma):
+def black_scholes_log_st_mgf(u, t, r, q, S0, sigma):
     chf_xt = diffusion_mgf
     return general_ln_st_mgf(u, t, r, q, S0, chf_xt, sigma=sigma)
 

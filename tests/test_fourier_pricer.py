@@ -2,9 +2,16 @@
 
 import unittest
 
-from fftoptionlib.fourier_pricer import carr_madan_fft_call_pricer, carr_madan_fraction_fft_call_pricer
+from fftoptionlib.fourier_pricer import (
+    carr_madan_fft_call_pricer,
+    carr_madan_fraction_fft_call_pricer,
+)
 from fftoptionlib.helper import spline_fitting
-from fftoptionlib.process_class import BlackSchole, Heston, VarianceGamma
+from fftoptionlib.process_class import (
+    BlackScholes,
+    Heston,
+    VarianceGamma,
+)
 
 
 class TestFourierPricer(unittest.TestCase):
@@ -17,7 +24,7 @@ class TestFourierPricer(unittest.TestCase):
         r = 0.05
         q = 0
         sigma = 0.3
-        strike, call_prices = carr_madan_fft_call_pricer(N, d_u, alpha, r, t, S0, q, BlackSchole(sigma).set_type('chf'))
+        strike, call_prices = carr_madan_fft_call_pricer(N, d_u, alpha, r, t, S0, q, BlackScholes(sigma).set_type('chf'))
         ffn_pricer = spline_fitting(strike, call_prices, 2)
         exp_res = 19.6974
         res = ffn_pricer(90)
@@ -33,7 +40,7 @@ class TestFourierPricer(unittest.TestCase):
         r = 0.05
         q = 0
         sigma = 0.3
-        strike, call_prices = carr_madan_fraction_fft_call_pricer(N, d_u, d_k, alpha, r, t, S0, q, BlackSchole(sigma).set_type('chf'))
+        strike, call_prices = carr_madan_fraction_fft_call_pricer(N, d_u, d_k, alpha, r, t, S0, q, BlackScholes(sigma).set_type('chf'))
         ffn_pricer = spline_fitting(strike, call_prices, 2)
         exp_res = 19.6974
         res = ffn_pricer(90)

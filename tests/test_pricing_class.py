@@ -3,11 +3,23 @@
 import unittest
 
 import numpy as np
+import numpy.testing as npt
 
-from fftoptionlib.engine_class import FFTEngine, FractionFFTEngine, CosineEngine
+from fftoptionlib.engine_class import (
+    FFTEngine,
+    FractionFFTEngine,
+    CosineEngine,
+)
 from fftoptionlib.option_class import BasicOption
 from fftoptionlib.pricing_class import FourierPricer
-from fftoptionlib.process_class import BlackSchole, MertonJump, KouJump, NIG, CGMY, Poisson
+from fftoptionlib.process_class import (
+    BlackScholes,
+    MertonJump,
+    KouJump,
+    NIG,
+    CGMY,
+    Poisson,
+)
 
 
 class TestPricingClass(unittest.TestCase):
@@ -36,10 +48,10 @@ class TestPricingClass(unittest.TestCase):
         N = 2 ** 15
         d_u = 0.01
         alpha = 1
-        fft_pricer.set_log_st_process(BlackSchole(volatility))
+        fft_pricer.set_log_st_process(BlackScholes(volatility))
         fft_pricer.set_pricing_engine(FFTEngine(N, d_u, alpha, spline_order=3))
         res = fft_pricer.calc_price(strike_arr, put_call_arr, put_label='put')
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)
 
     def test_cal_price_fractional_fft(self):
         fft_pricer = FourierPricer(self.vanilla_option)
@@ -54,10 +66,10 @@ class TestPricingClass(unittest.TestCase):
         d_u = 0.01
         d_k = 0.01
         alpha = 1
-        fft_pricer.set_log_st_process(BlackSchole(volatility))
+        fft_pricer.set_log_st_process(BlackScholes(volatility))
         fft_pricer.set_pricing_engine(FractionFFTEngine(N, d_u, d_k, alpha, spline_order=3))
         res = fft_pricer.calc_price(strike_arr, put_call_arr, put_label='put')
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)
 
     def test_cal_price_cosine(self):
         cosine_pricer = FourierPricer(self.vanilla_option)
@@ -70,10 +82,10 @@ class TestPricingClass(unittest.TestCase):
         volatility = 0.20
         N = 150
 
-        cosine_pricer.set_log_st_process(BlackSchole(volatility))
+        cosine_pricer.set_log_st_process(BlackScholes(volatility))
         cosine_pricer.set_pricing_engine(CosineEngine(N, L=30))
         res = cosine_pricer.calc_price(strike_arr, put_call_arr, put_label='put')
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)
 
     def test_cal_price_cosine_2(self):
         cosine_pricer = FourierPricer(self.vanilla_option)
@@ -86,10 +98,13 @@ class TestPricingClass(unittest.TestCase):
         volatility = 0.20
         N = 2000
 
-        cosine_pricer.set_log_st_process(MertonJump(sigma=volatility, jump_rate=0.090913148257155449, norm_m=-0.91157356544103341, norm_sig=7.3383200797618833e-05))
+        cosine_pricer.set_log_st_process(MertonJump(sigma=volatility,
+                                                    jump_rate=0.090913148257155449,
+                                                    norm_m=-0.91157356544103341,
+                                                    norm_sig=7.3383200797618833e-05))
         cosine_pricer.set_pricing_engine(CosineEngine(N, L=30))
         res = cosine_pricer.calc_price(strike_arr, put_call_arr, put_label='put')
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)
 
     def test_cal_price_cosine_3(self):
         cosine_pricer = FourierPricer(self.vanilla_option)
@@ -109,7 +124,7 @@ class TestPricingClass(unittest.TestCase):
                                                  prob_pos=-200.08018971817182))
         cosine_pricer.set_pricing_engine(CosineEngine(N, L=30))
         res = cosine_pricer.calc_price(strike_arr, put_call_arr, put_label='put')
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)
 
     def test_cal_price_cosine_4(self):
         cosine_pricer = FourierPricer(self.vanilla_option)
@@ -127,7 +142,7 @@ class TestPricingClass(unittest.TestCase):
                                              delta=0.6))
         cosine_pricer.set_pricing_engine(CosineEngine(N, L=30))
         res = cosine_pricer.calc_price(strike_arr, put_call_arr, put_label='put')
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)
 
     def test_cal_price_cosine_5(self):
         cosine_pricer = FourierPricer(self.vanilla_option)
@@ -145,15 +160,13 @@ class TestPricingClass(unittest.TestCase):
         ))
         cosine_pricer.set_pricing_engine(CosineEngine(N, L=30))
         res = cosine_pricer.calc_price(strike_arr, put_call_arr, put_label='put')
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)
 
     def test_cal_price_cosine_6(self):
         cosine_pricer = FourierPricer(self.vanilla_option)
         strike_arr = np.array([5, 10, 30, 36, 40, 60])
         put_call_arr = np.array(['call', 'call', 'put', 'call', 'call', 'put'])
-        exp = np.array([30.9958673, 26.01656399, 0.15928293, 1.72971868, 0.56756891,
-                        23.82357896]
-                       )
+        exp = np.array([30.9958673, 26.01656399, 0.15928293, 1.72971868, 0.56756891, 23.82357896])
 
         volatility = 0.20
         N = 2000
@@ -164,4 +177,4 @@ class TestPricingClass(unittest.TestCase):
                                               y=1.5))
         cosine_pricer.set_pricing_engine(CosineEngine(N, L=30))
         res = cosine_pricer.calc_price(strike_arr, put_call_arr, put_label='put')
-        np.testing.assert_array_almost_equal(res, exp, 6)
+        npt.assert_array_almost_equal(res, exp, 6)

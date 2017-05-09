@@ -15,7 +15,7 @@ from fftoptionlib.characteristic_funs import (
     nig_log_st_chf,
 )
 from fftoptionlib.moment_generating_funs import (
-    black_schole_log_st_mgf,
+    black_scholes_log_st_mgf,
     merton_jump_log_st_mgf,
     poisson_log_st_mgf,
     diffusion_mgf,
@@ -34,7 +34,7 @@ from fftoptionlib.moment_generating_funs import (
 class TestMomentGeneratingFunctions(unittest.TestCase):
     def test_black_shole_log_st_mgf(self):
         v, S, t, r, q, sigma = 4, 20.2, 1.5, 0.02, 0.01, 0.2
-        res = black_schole_log_st_mgf(v, t, r, q, S, sigma)
+        res = black_scholes_log_st_mgf(v, t, r, q, S, sigma)
         exp_res = black_schole_log_st_chf(v * (-1j), t, r, q, S, sigma)
         self.assertAlmostEqual(res, exp_res)
 
