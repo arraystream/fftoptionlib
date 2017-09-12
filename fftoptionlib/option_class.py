@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import copy
+from datetime import datetime
+
 import numpy as np
 from pandas import Timestamp, DateOffset
-from datetime import datetime
-import copy
+
 
 class BasicOption(object):
     def __init__(self):
