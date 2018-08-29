@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import abc
 
 from fftoptionlib.characteristic_funs import (

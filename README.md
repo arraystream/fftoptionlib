@@ -26,7 +26,7 @@ ArrayStream (Yu Zheng, Ran Fan)
 
 ### Documentation
 
-Please see our blog post on: [http://www.arraystream.com/blog/fft-based-option-pricing.html](http://www.arraystream.com/blog/fft-based-option-pricing.html)
+Please see our blog post on: [https://www.arraystream.com/fftoptionlib/](https://www.arraystream.com/fftoptionlib/)
 
 ### Contributing
 

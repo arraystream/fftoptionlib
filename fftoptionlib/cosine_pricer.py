@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 
 from fftoptionlib.characteristic_funs import general_log_moneyness_chf

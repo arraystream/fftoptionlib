@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import autograd.numpy as np
 from scipy.special import gamma
 from autograd import grad

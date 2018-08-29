@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .helper import call_to_put
 
 
