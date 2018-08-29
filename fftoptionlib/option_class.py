@@ -1,6 +1,8 @@
+import copy
+from datetime import datetime
+
 import numpy as np
 from pandas import Timestamp, DateOffset
-from datetime import datetime
 
 
 class BasicOption(object):
@@ -83,3 +85,28 @@ class BasicOption(object):
 
     def get_time_to_maturity(self, annualization_factor=365):
         return self.get_duration() / annualization_factor
+
+    def to_dict(self):
+        res = {'underlying_close_price': self._underlying_close_price,
+               'dividend': self._dividend,
+               'expiry_date': self._expiry_date,
+               'trade_date': self._trade_date,
+               'forward_price': self._forward_price,
+               'zero_rate': self._zero_rate,
+               'exercise_type': self._exercise_type}
+        return res
+
+    def serialize(self):
+        return self.to_dict()
+
+    def deserialize(self, serial_dict):
+        self._underlying_close_price = serial_dict['underlying_close_price']
+        self._dividend = serial_dict['dividend']
+        self._expiry_date = serial_dict['expiry_date']
+        self._trade_date = serial_dict['trade_date']
+        self._forward_price = serial_dict['forward_price']
+        self._zero_rate = serial_dict['zero_rate']
+        self._exercise_type = serial_dict['exercise_type']
+
+    def copy(self):
+        return copy.deepcopy(self)
