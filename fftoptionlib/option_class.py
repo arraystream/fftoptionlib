@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 from pandas import Timestamp, DateOffset
 from datetime import datetime
@@ -72,7 +70,7 @@ class BasicOption(object):
 
     def get_duration(self):
         """
-        :return: time in days 
+        :return: time in days
         """
         return (self.get_expiry_date() - self.get_evaluation_date()).days
 
